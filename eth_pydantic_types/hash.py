@@ -4,13 +4,14 @@ from pydantic_core.core_schema import (
     CoreSchema,
     ValidationInfo,
     bytes_schema,
+    int_schema,
     str_schema,
     with_info_before_validator_function,
 )
 
 from eth_pydantic_types.hex import BaseHexStr, HexBytes
 from eth_pydantic_types.serializers import hex_serializer
-from eth_pydantic_types.validators import validate_bytes_size, validate_str_size
+from eth_pydantic_types.validators import validate_bytes_size, validate_int_size, validate_str_size
 
 
 def _get_hash_pattern(str_size: int) -> str:
@@ -87,23 +88,60 @@ class HashStr(BaseHexStr):
         return validate_str_size(value, cls.size * 2)
 
 
-def _make_hash_cls(size: int, base_type: Type):
+class HashInt(int):
+    """
+    Represents an integer.
+    This type is meant to be overridden by the larger hash types with a new size.
+    e.g. Int32, UInt64.
+    """
+
+    size: ClassVar[int] = 1
+    signed: ClassVar[bool] = True
+
+    @classmethod
+    def __get_pydantic_core_schema__(cls, value, handler=None) -> CoreSchema:
+        return with_info_before_validator_function(cls.__eth_pydantic_validate__, int_schema())
+
+    @classmethod
+    def __eth_pydantic_validate__(cls, value: Any, info: Optional[ValidationInfo] = None) -> int:
+        return cls(cls.validate_size(int(value)))
+
+    @classmethod
+    def validate_size(cls, value: int) -> int:
+        return validate_int_size(value, cls.size, cls.signed)
+
+
+def _make_hash_cls(size: int, base_type: Type, signed: bool = True):
+
+    str_size = size * 2
     if issubclass(base_type, bytes):
         suffix = "Bytes"
         base_type = HashBytes
-    else:
-        suffix = "Str"
-        base_type = HashStr
-
-    str_size = size * 2
-    return type(
-        f"Hash{suffix}{size}",
-        (base_type,),
-        dict(
+        typeDict = dict(
             size=size,
             schema_pattern=_get_hash_pattern(str_size),
             schema_examples=_get_hash_examples(str_size),
-        ),
+        )
+    elif issubclass(base_type, str):
+        suffix = "Str"
+        base_type = HashStr
+        typeDict = dict(
+            size=size,
+            schema_pattern=_get_hash_pattern(str_size),
+            schema_examples=_get_hash_examples(str_size),
+        )
+    else:
+        suffix = "Int" if signed else "UInt"
+        base_type = HashInt
+        typeDict = dict(
+            size=size,
+            signed=signed,
+        )
+
+    return type(
+        f"Hash{suffix}{size}",
+        (base_type,),
+        typeDict,
     )
 
 
@@ -119,3 +157,15 @@ HashStr16 = _make_hash_cls(16, str)
 HashStr20 = _make_hash_cls(20, str)
 HashStr32 = _make_hash_cls(32, str)
 HashStr64 = _make_hash_cls(64, str)
+HashInt8 = _make_hash_cls(8, int, signed=True)
+HashInt16 = _make_hash_cls(16, int, signed=True)
+HashInt32 = _make_hash_cls(32, int, signed=True)
+HashInt64 = _make_hash_cls(64, int, signed=True)
+HashInt128 = _make_hash_cls(128, int, signed=True)
+HashInt256 = _make_hash_cls(256, int, signed=True)
+HashUInt8 = _make_hash_cls(8, int, signed=False)
+HashUInt16 = _make_hash_cls(16, int, signed=False)
+HashUInt32 = _make_hash_cls(32, int, signed=False)
+HashUInt64 = _make_hash_cls(64, int, signed=False)
+HashUInt128 = _make_hash_cls(128, int, signed=False)
+HashUInt256 = _make_hash_cls(256, int, signed=False)
