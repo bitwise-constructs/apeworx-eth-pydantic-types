@@ -88,10 +88,10 @@ class HashStr(BaseHexStr):
         return validate_str_size(value, cls.size * 2)
 
 
-class HashInt(int):
+class Int(int):
     """
     Represents an integer.
-    This type is meant to be overridden by the larger hash types with a new size.
+    This type is meant to be overridden by the larger types with a new size.
     e.g. Int32, UInt64.
     """
 
@@ -111,7 +111,7 @@ class HashInt(int):
         return validate_int_size(value, cls.size, cls.signed)
 
 
-def _make_hash_cls(size: int, base_type: Type, signed: bool = True):
+def _make_cls(size: int, base_type: Type, signed: bool = True, prefix: str = ""):
 
     str_size = size * 2
     if issubclass(base_type, bytes):
@@ -132,40 +132,40 @@ def _make_hash_cls(size: int, base_type: Type, signed: bool = True):
         )
     else:
         suffix = "Int" if signed else "UInt"
-        base_type = HashInt
+        base_type = Int
         type_dict = dict(
             size=size,
             signed=signed,
         )
 
     return type(
-        f"Hash{suffix}{size}",
+        f"{prefix}{suffix}{size}",
         (base_type,),
         type_dict,
     )
 
 
-HashBytes4 = _make_hash_cls(4, bytes)
-HashBytes8 = _make_hash_cls(8, bytes)
-HashBytes16 = _make_hash_cls(16, bytes)
-HashBytes20 = _make_hash_cls(20, bytes)
-HashBytes32 = _make_hash_cls(32, bytes)
-HashBytes64 = _make_hash_cls(64, bytes)
-HashStr4 = _make_hash_cls(4, str)
-HashStr8 = _make_hash_cls(8, str)
-HashStr16 = _make_hash_cls(16, str)
-HashStr20 = _make_hash_cls(20, str)
-HashStr32 = _make_hash_cls(32, str)
-HashStr64 = _make_hash_cls(64, str)
-HashInt8 = _make_hash_cls(8, int, signed=True)
-HashInt16 = _make_hash_cls(16, int, signed=True)
-HashInt32 = _make_hash_cls(32, int, signed=True)
-HashInt64 = _make_hash_cls(64, int, signed=True)
-HashInt128 = _make_hash_cls(128, int, signed=True)
-HashInt256 = _make_hash_cls(256, int, signed=True)
-HashUInt8 = _make_hash_cls(8, int, signed=False)
-HashUInt16 = _make_hash_cls(16, int, signed=False)
-HashUInt32 = _make_hash_cls(32, int, signed=False)
-HashUInt64 = _make_hash_cls(64, int, signed=False)
-HashUInt128 = _make_hash_cls(128, int, signed=False)
-HashUInt256 = _make_hash_cls(256, int, signed=False)
+HashBytes4 = _make_cls(4, bytes, prefix="Hash")
+HashBytes8 = _make_cls(8, bytes, prefix="Hash")
+HashBytes16 = _make_cls(16, bytes, prefix="Hash")
+HashBytes20 = _make_cls(20, bytes, prefix="Hash")
+HashBytes32 = _make_cls(32, bytes, prefix="Hash")
+HashBytes64 = _make_cls(64, bytes, prefix="Hash")
+HashStr4 = _make_cls(4, str, prefix="Hash")
+HashStr8 = _make_cls(8, str, prefix="Hash")
+HashStr16 = _make_cls(16, str, prefix="Hash")
+HashStr20 = _make_cls(20, str, prefix="Hash")
+HashStr32 = _make_cls(32, str, prefix="Hash")
+HashStr64 = _make_cls(64, str, prefix="Hash")
+Int8 = _make_cls(8, int, signed=True)
+Int16 = _make_cls(16, int, signed=True)
+Int32 = _make_cls(32, int, signed=True)
+Int64 = _make_cls(64, int, signed=True)
+Int128 = _make_cls(128, int, signed=True)
+Int256 = _make_cls(256, int, signed=True)
+UInt8 = _make_cls(8, int, signed=False)
+UInt16 = _make_cls(16, int, signed=False)
+UInt32 = _make_cls(32, int, signed=False)
+UInt64 = _make_cls(64, int, signed=False)
+UInt128 = _make_cls(128, int, signed=False)
+UInt256 = _make_cls(256, int, signed=False)
