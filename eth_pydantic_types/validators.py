@@ -26,7 +26,7 @@ def validate_size(value: __SIZED_T, size: int, coerce: Optional[Callable] = None
 
 
 def validate_in_range(value: int, size: int, signed: bool = True) -> int:
-    if signed:
+    if not signed:
         if value >= 0 and value < 2**size:
             return value
 

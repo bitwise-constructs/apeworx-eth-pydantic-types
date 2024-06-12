@@ -1,4 +1,5 @@
-from pydantic import BaseModel
+import pytest
+from pydantic import BaseModel, ValidationError
 
 from eth_pydantic_types.hash import (
     HashInt8,
@@ -56,6 +57,6 @@ class UnsignedModel(BaseModel):
         )
 
 
-# def test_invalid_int():
-#    with pytest.raises(ValidationError):
-#        UnsignedModel.from_single(-1)
+def test_negative_unsigned_int():
+    with pytest.raises(ValidationError):
+        UnsignedModel.from_single(-1)
