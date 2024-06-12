@@ -117,7 +117,7 @@ def _make_hash_cls(size: int, base_type: Type, signed: bool = True):
     if issubclass(base_type, bytes):
         suffix = "Bytes"
         base_type = HashBytes
-        typeDict = dict(
+        type_dict = dict(
             size=size,
             schema_pattern=_get_hash_pattern(str_size),
             schema_examples=_get_hash_examples(str_size),
@@ -125,7 +125,7 @@ def _make_hash_cls(size: int, base_type: Type, signed: bool = True):
     elif issubclass(base_type, str):
         suffix = "Str"
         base_type = HashStr
-        typeDict = dict(
+        type_dict = dict(
             size=size,
             schema_pattern=_get_hash_pattern(str_size),
             schema_examples=_get_hash_examples(str_size),
@@ -133,7 +133,7 @@ def _make_hash_cls(size: int, base_type: Type, signed: bool = True):
     else:
         suffix = "Int" if signed else "UInt"
         base_type = HashInt
-        typeDict = dict(
+        type_dict = dict(
             size=size,
             signed=signed,
         )
@@ -141,7 +141,7 @@ def _make_hash_cls(size: int, base_type: Type, signed: bool = True):
     return type(
         f"Hash{suffix}{size}",
         (base_type,),
-        typeDict,
+        type_dict,
     )
 
 
