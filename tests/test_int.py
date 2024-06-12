@@ -17,7 +17,7 @@ from eth_pydantic_types.hash import (
 )
 
 
-class IntModel(BaseModel):
+class Model(BaseModel):
     valueint8: HashInt8
     valueint16: HashInt16
     valueint32: HashInt32
@@ -73,4 +73,4 @@ class IntModel(BaseModel):
 
 def test_invalid_int():
     with pytest.raises(ValidationError):
-        IntModel.unsigned_from_single(-1)
+        Model.unsigned_from_single(-1)

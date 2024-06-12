@@ -25,7 +25,7 @@ def validate_size(value: __SIZED_T, size: int, coerce: Optional[Callable] = None
     raise SizeError(size, value)
 
 
-def validate_in_range(value: __SIZED_T, size: int, signed: bool = True) -> __SIZED_T:
+def validate_in_range(value: int, size: int, signed: bool = True) -> int:
     if signed:
         if value >= 0 and value < 2**size:
             return value
@@ -49,7 +49,7 @@ def validate_str_size(value: str, size: int) -> str:
     return validate_size(value, size, coerce=lambda v: _coerce_hexstr_size(v, size))
 
 
-def validate_int_size(value: str, size: int, signed: bool) -> str:
+def validate_int_size(value: int, size: int, signed: bool) -> int:
     return validate_in_range(value, size, signed)
 
 
