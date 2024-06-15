@@ -1,7 +1,7 @@
 import pytest
 from pydantic import BaseModel, ValidationError
 
-from eth_pydantic_types.hash import (
+from eth_pydantic_types.numbers import (
     Int8,
     Int16,
     Int32,

@@ -1,30 +1,21 @@
 import pytest
 from pydantic import BaseModel, ValidationError
 
-from eth_pydantic_types.hash import (
-    HashBytes8,
-    HashBytes16,
-    HashBytes20,
-    HashBytes32,
-    HashBytes64,
-    HashStr8,
-    HashStr16,
-    HashStr32,
-    HashStr64,
-)
+from eth_pydantic_types.bytes import Bytes8, Bytes16, Bytes20, Bytes32, Bytes64
 from eth_pydantic_types.hex import HexBytes
+from eth_pydantic_types.string import String8, String16, String32, String64
 
 
 class Model(BaseModel):
-    valuebytes8: HashBytes8
-    valuebytes16: HashBytes16
-    valuebytes20: HashBytes20
-    valuebytes32: HashBytes32
-    valuebytes64: HashBytes64
-    valuestr8: HashStr8
-    valuestr16: HashStr16
-    valuestr32: HashStr32
-    valuestr64: HashStr64
+    valuebytes8: Bytes8
+    valuebytes16: Bytes16
+    valuebytes20: Bytes20
+    valuebytes32: Bytes32
+    valuebytes64: Bytes64
+    valuestr8: String8
+    valuestr16: String16
+    valuestr32: String32
+    valuestr64: String64
 
     @classmethod
     def from_single(cls, value):
@@ -42,14 +33,14 @@ class Model(BaseModel):
 
 
 def test_hashbytes_fromhex(bytes32str):
-    actual_with_0x = HashBytes32.fromhex(bytes32str)
-    actual_without_0x = HashBytes32.fromhex(bytes32str[2:])
+    actual_with_0x = Bytes32.fromhex(bytes32str)
+    actual_without_0x = Bytes32.fromhex(bytes32str[2:])
     expected = HexBytes(bytes32str)
     assert actual_with_0x == actual_without_0x == expected
 
 
 def test_hashbytes_is_bytes(bytes32str):
-    assert isinstance(HashBytes32.fromhex(bytes32str), bytes)
+    assert isinstance(Bytes32.fromhex(bytes32str), bytes)
 
 
 @pytest.mark.parametrize("value", ("0x32", HexBytes("0x32"), b"2", 50))
@@ -84,7 +75,7 @@ def test_hash_removes_leading_zeroes_if_needed():
     address = "0x000000000000000000000000cafac3dd18ac6c6e92c921884f9e4176737c052c"
 
     class MyModel(BaseModel):
-        my_address: HashBytes20
+        my_address: Bytes20
 
     # Test both str and bytes for input.
     for addr in (address, HexBytes(address)):
