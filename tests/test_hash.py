@@ -1,16 +1,26 @@
 import pytest
 from pydantic import BaseModel, ValidationError
 
-from eth_pydantic_types.bytes import Bytes8, Bytes16, Bytes20, Bytes32, Bytes64
-from eth_pydantic_types.hex import HexBytes, HexStr8, HexStr16, HexStr32, HexStr64
+from eth_pydantic_types.hex import (
+    HexBytes,
+    HexBytes8,
+    HexBytes16,
+    HexBytes20,
+    HexBytes32,
+    HexBytes64,
+    HexStr8,
+    HexStr16,
+    HexStr32,
+    HexStr64,
+)
 
 
 class Model(BaseModel):
-    valuebytes8: Bytes8
-    valuebytes16: Bytes16
-    valuebytes20: Bytes20
-    valuebytes32: Bytes32
-    valuebytes64: Bytes64
+    valuebytes8: HexBytes8
+    valuebytes16: HexBytes16
+    valuebytes20: HexBytes20
+    valuebytes32: HexBytes32
+    valuebytes64: HexBytes64
     valuestr8: HexStr8
     valuestr16: HexStr16
     valuestr32: HexStr32
@@ -32,14 +42,14 @@ class Model(BaseModel):
 
 
 def test_hashbytes_fromhex(bytes32str):
-    actual_with_0x = Bytes32.fromhex(bytes32str)
-    actual_without_0x = Bytes32.fromhex(bytes32str[2:])
+    actual_with_0x = HexBytes32.fromhex(bytes32str)
+    actual_without_0x = HexBytes32.fromhex(bytes32str[2:])
     expected = HexBytes(bytes32str)
     assert actual_with_0x == actual_without_0x == expected
 
 
 def test_hashbytes_is_bytes(bytes32str):
-    assert isinstance(Bytes32.fromhex(bytes32str), bytes)
+    assert isinstance(HexBytes32.fromhex(bytes32str), bytes)
 
 
 @pytest.mark.parametrize("value", ("0x32", HexBytes("0x32"), b"2", 50))
@@ -74,7 +84,7 @@ def test_hash_removes_leading_zeroes_if_needed():
     address = "0x000000000000000000000000cafac3dd18ac6c6e92c921884f9e4176737c052c"
 
     class MyModel(BaseModel):
-        my_address: Bytes20
+        my_address: HexBytes20
 
     # Test both str and bytes for input.
     for addr in (address, HexBytes(address)):

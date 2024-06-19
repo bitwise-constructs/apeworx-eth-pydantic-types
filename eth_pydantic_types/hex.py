@@ -14,7 +14,7 @@ from pydantic_core.core_schema import (
 
 from eth_pydantic_types._error import HexValueError
 from eth_pydantic_types.serializers import hex_serializer
-from eth_pydantic_types.validators import validate_str_size
+from eth_pydantic_types.validators import validate_bytes_size, validate_str_size
 
 schema_pattern = "^0x([0-9a-f][0-9a-f])*$"
 schema_examples = (
@@ -29,6 +29,8 @@ schema_examples = (
 
 
 class BaseHex:
+    bound: bool = False
+    size: ClassVar[int] = 0
     schema_pattern: ClassVar[str] = schema_pattern
     schema_examples: ClassVar[Tuple[str, ...]] = schema_examples
 
@@ -49,7 +51,10 @@ class HexBytes(BaseHexBytes, BaseHex):
 
     @classmethod
     def __get_pydantic_core_schema__(cls, value, handle=None) -> CoreSchema:
-        schema = with_info_before_validator_function(cls.__eth_pydantic_validate__, bytes_schema())
+        schema = with_info_before_validator_function(
+            cls.__eth_pydantic_validate__,
+            bytes_schema(max_length=cls.size, min_length=cls.size) if cls.bound else bytes_schema(),
+        )
         schema["serialization"] = hex_serializer
         return schema
 
@@ -62,7 +67,11 @@ class HexBytes(BaseHexBytes, BaseHex):
     def __eth_pydantic_validate__(
         cls, value: Any, info: Optional[ValidationInfo] = None
     ) -> BaseHexBytes:
-        return BaseHexBytes(value)
+        return cls(cls.validate_size(HexBytes(value)))
+
+    @classmethod
+    def validate_size(cls, value: bytes) -> bytes:
+        return validate_bytes_size(value, cls.size) if cls.bound else value
 
 
 class BaseHexStr(str, BaseHex):
@@ -102,9 +111,6 @@ class BaseHexStr(str, BaseHex):
 class HexStr(BaseHexStr):
     """A hex string value, typically from a hash."""
 
-    bound: bool = False
-    size: ClassVar[int] = 0
-
     @classmethod
     def __get_pydantic_core_schema__(cls, value, handler=None) -> CoreSchema:
         str_size = cls.size * 2 + 2
@@ -143,6 +149,9 @@ def validate_hex_str(value: str) -> str:
     return f"0x{hex_value}"
 
 
+# Creates bound variations e.g. HexStr16, HexStr64
+
+
 def get_hash_pattern(str_size: int) -> str:
     return f"^0x[a-fA-F0-9]{{{str_size}}}$"
 
@@ -157,7 +166,16 @@ def get_hash_examples(str_size: int) -> Tuple[str, str, str, str]:
 
 def _make_cls(size: int, base_type: Type, prefix: str = "", dict_additions: dict = {}):
     str_size = size * 2
-    if issubclass(base_type, str):
+    if issubclass(base_type, bytes):
+        display = "Bytes"
+        base_type = HexBytes
+        type_dict = dict(
+            bound=True,
+            size=size,
+            schema_pattern=get_hash_pattern(str_size),
+            schema_examples=get_hash_examples(str_size),
+        )
+    elif issubclass(base_type, str):
         display = "Str"
         base_type = HexStr
         type_dict = dict(
@@ -174,6 +192,12 @@ def _make_cls(size: int, base_type: Type, prefix: str = "", dict_additions: dict
     )
 
 
+HexBytes4 = _make_cls(4, bytes, prefix="Hex")
+HexBytes8 = _make_cls(8, bytes, prefix="Hex")
+HexBytes16 = _make_cls(16, bytes, prefix="Hex")
+HexBytes20 = _make_cls(20, bytes, prefix="Hex")
+HexBytes32 = _make_cls(32, bytes, prefix="Hex")
+HexBytes64 = _make_cls(64, bytes, prefix="Hex")
 HexStr4 = _make_cls(4, str, prefix="Hex")
 HexStr8 = _make_cls(8, str, prefix="Hex")
 HexStr16 = _make_cls(16, str, prefix="Hex")
