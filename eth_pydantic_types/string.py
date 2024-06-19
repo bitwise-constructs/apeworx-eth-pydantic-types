@@ -43,7 +43,7 @@ class String(BaseHexStr):
         return validate_str_size(value, cls.size * 2)
 
 
-def _make_cls(size: int, base_type: Type, prefix: str = ""):
+def _make_cls(size: int, base_type: Type, prefix: str = "", dict_additions: dict = {}):
     str_size = size * 2
     if issubclass(base_type, str):
         display = "Str"
@@ -53,6 +53,7 @@ def _make_cls(size: int, base_type: Type, prefix: str = ""):
             size=size,
             schema_pattern=get_hash_pattern(str_size),
             schema_examples=get_hash_examples(str_size),
+            **dict_additions,
         )
 
     return type(
@@ -62,9 +63,9 @@ def _make_cls(size: int, base_type: Type, prefix: str = ""):
     )
 
 
-String4 = _make_cls(4, str)
-String8 = _make_cls(8, str)
-String16 = _make_cls(16, str)
-String20 = _make_cls(20, str)
-String32 = _make_cls(32, str)
-String64 = _make_cls(64, str)
+# String4 = _make_cls(4, str)
+# String8 = _make_cls(8, str)
+# String16 = _make_cls(16, str)
+# String20 = _make_cls(20, str)
+# String32 = _make_cls(32, str)
+# String64 = _make_cls(64, str)

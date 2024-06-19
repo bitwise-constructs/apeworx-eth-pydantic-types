@@ -3,7 +3,8 @@ from typing import ClassVar
 from eth_pydantic_types.numbers import Int as _Int
 from eth_pydantic_types.numbers import UInt as _UInt
 from eth_pydantic_types.numbers import _make_cls
-from eth_pydantic_types.string import String as _String
+
+# from eth_pydantic_types.string import String as _String
 
 
 class Int(_Int):
@@ -40,11 +41,11 @@ UInt128 = _make_cls(128, int, signed=False, dict_additions=dict(abi_type="uint12
 UInt256 = _make_cls(256, int, signed=False, dict_additions=dict(abi_type="uint256"))
 
 
-class String(_String):
-    """
-    Represents a single-slot static hash as a str.
-    This type is meant to be overridden by the larger hash types with a new size.
-    e.g. String20, String32.
-    """
+# class String(_String):
+#     """
+#     Represents a single-slot static hash as a str.
+#     This type is meant to be overridden by the larger hash types with a new size.
+#     e.g. String20, String32.
+#     """
 
-    abi_type: ClassVar[str] = "string"
+#     abi_type: ClassVar[str] = "string"

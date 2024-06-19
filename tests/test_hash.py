@@ -2,8 +2,7 @@ import pytest
 from pydantic import BaseModel, ValidationError
 
 from eth_pydantic_types.bytes import Bytes8, Bytes16, Bytes20, Bytes32, Bytes64
-from eth_pydantic_types.hex import HexBytes
-from eth_pydantic_types.string import String8, String16, String32, String64
+from eth_pydantic_types.hex import HexBytes, HexStr8, HexStr16, HexStr32, HexStr64
 
 
 class Model(BaseModel):
@@ -12,10 +11,10 @@ class Model(BaseModel):
     valuebytes20: Bytes20
     valuebytes32: Bytes32
     valuebytes64: Bytes64
-    valuestr8: String8
-    valuestr16: String16
-    valuestr32: String32
-    valuestr64: String64
+    valuestr8: HexStr8
+    valuestr16: HexStr16
+    valuestr32: HexStr32
+    valuestr64: HexStr64
 
     @classmethod
     def from_single(cls, value):
