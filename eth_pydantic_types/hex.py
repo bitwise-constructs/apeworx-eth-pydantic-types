@@ -149,9 +149,6 @@ def validate_hex_str(value: str) -> str:
     return f"0x{hex_value}"
 
 
-# Creates bound variations e.g. HexStr16, HexStr64
-
-
 def get_hash_pattern(str_size: int) -> str:
     return f"^0x[a-fA-F0-9]{{{str_size}}}$"
 
@@ -166,25 +163,15 @@ def get_hash_examples(str_size: int) -> Tuple[str, str, str, str]:
 
 def _make_cls(size: int, base_type: Type, prefix: str = "", dict_additions: dict = {}):
     str_size = size * 2
-    if issubclass(base_type, bytes):
-        display = "Bytes"
-        base_type = HexBytes
-        type_dict = dict(
-            bound=True,
-            size=size,
-            schema_pattern=get_hash_pattern(str_size),
-            schema_examples=get_hash_examples(str_size),
-        )
-    elif issubclass(base_type, str):
-        display = "Str"
-        base_type = HexStr
-        type_dict = dict(
-            bound=True,
-            size=size,
-            schema_pattern=get_hash_pattern(str_size),
-            schema_examples=get_hash_examples(str_size),
-            **dict_additions,
-        )
+    display = "Bytes" if issubclass(base_type, bytes) else "Str"
+    base_type = HexBytes if issubclass(base_type, bytes) else HexStr
+    type_dict = dict(
+        bound=True,
+        size=size,
+        schema_pattern=get_hash_pattern(str_size),
+        schema_examples=get_hash_examples(str_size),
+        **dict_additions,
+    )
     return type(
         f"{prefix}{display}{size}",
         (base_type,),
@@ -192,6 +179,8 @@ def _make_cls(size: int, base_type: Type, prefix: str = "", dict_additions: dict
     )
 
 
+# Creates bound variations e.g. HexStr16, HexStr64
+HexBytes1 = _make_cls(1, bytes, prefix="Hex")
 HexBytes4 = _make_cls(4, bytes, prefix="Hex")
 HexBytes8 = _make_cls(8, bytes, prefix="Hex")
 HexBytes16 = _make_cls(16, bytes, prefix="Hex")

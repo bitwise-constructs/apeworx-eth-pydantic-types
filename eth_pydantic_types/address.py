@@ -5,7 +5,7 @@ from eth_utils import is_checksum_address, to_checksum_address
 from pydantic_core.core_schema import ValidationInfo, str_schema
 from typing_extensions import Annotated
 
-from eth_pydantic_types.hex import HexStr20
+from .hex import HexStr20
 
 ADDRESS_PATTERN = "^0x[a-fA-F0-9]{40}$"
 
