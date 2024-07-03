@@ -1,43 +1,20 @@
 import pytest
 from pydantic import BaseModel, ValidationError
 
-from eth_pydantic_types.hex import (
-    HexBytes,
-    HexBytes8,
-    HexBytes16,
-    HexBytes20,
-    HexBytes32,
-    HexBytes64,
-    HexStr8,
-    HexStr16,
-    HexStr32,
-    HexStr64,
-)
+from eth_pydantic_types.hex import HexBytes, HexBytes20, HexBytes32, HexStr32
 
 
 class Model(BaseModel):
-    valuebytes8: HexBytes8
-    valuebytes16: HexBytes16
     valuebytes20: HexBytes20
     valuebytes32: HexBytes32
-    valuebytes64: HexBytes64
-    valuestr8: HexStr8
-    valuestr16: HexStr16
     valuestr32: HexStr32
-    valuestr64: HexStr64
 
     @classmethod
     def from_single(cls, value):
         return cls(
-            valuebytes8=value,
-            valuebytes16=value,
             valuebytes20=value,
             valuebytes32=value,
-            valuebytes64=value,
-            valuestr8=value,
-            valuestr16=value,
             valuestr32=value,
-            valuestr64=value,
         )
 
 
@@ -55,23 +32,12 @@ def test_hashbytes_is_bytes(bytes32str):
 @pytest.mark.parametrize("value", ("0x32", HexBytes("0x32"), b"2", 50))
 def test_hash(value):
     model = Model.from_single(value)
-    assert len(model.valuebytes8) == 8
-    assert len(model.valuebytes16) == 16
     assert len(model.valuebytes20) == 20
     assert len(model.valuebytes32) == 32
-    assert len(model.valuebytes64) == 64
-    assert len(model.valuestr8) == 18
-    assert len(model.valuestr16) == 34
     assert len(model.valuestr32) == 66
-    assert len(model.valuestr64) == 130
-    assert model.valuebytes8.hex().endswith("32")
-    assert model.valuebytes16.hex().endswith("32")
+    assert model.valuebytes20.hex().endswith("32")
     assert model.valuebytes32.hex().endswith("32")
-    assert model.valuestr64.endswith("32")
-    assert model.valuestr8.endswith("32")
-    assert model.valuestr16.endswith("32")
     assert model.valuestr32.endswith("32")
-    assert model.valuestr64.endswith("32")
 
 
 @pytest.mark.parametrize("value", ("foo", -35, "0x" + ("F" * 100)))
@@ -122,14 +88,8 @@ def test_model_dump(bytes32str):
     model = Model.from_single(5)
     actual = model.model_dump()
     expected = {
-        "valuebytes8": "0000000000000005",
-        "valuestr8": "0x0000000000000005",
-        "valuebytes16": "00000000000000000000000000000005",
         "valuebytes20": "0000000000000000000000000000000000000005",
-        "valuestr16": "0x00000000000000000000000000000005",
         "valuebytes32": "0000000000000000000000000000000000000000000000000000000000000005",
         "valuestr32": "0x0000000000000000000000000000000000000000000000000000000000000005",
-        "valuebytes64": "00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005",  # noqa: E501
-        "valuestr64": "0x00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000005",  # noqa: E501
     }
     assert actual == expected

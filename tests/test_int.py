@@ -1,29 +1,29 @@
 import pytest
 from pydantic import BaseModel, ValidationError
 
-from eth_pydantic_types.numbers import (
-    Int8,
-    Int16,
-    Int32,
-    Int64,
-    Int128,
-    Int256,
-    UInt8,
-    UInt16,
-    UInt32,
-    UInt64,
-    UInt128,
-    UInt256,
+from eth_pydantic_types.abi import (
+    int8,
+    int16,
+    int32,
+    int64,
+    int128,
+    int256,
+    uint8,
+    uint16,
+    uint32,
+    uint64,
+    uint128,
+    uint256,
 )
 
 
 class SignedModel(BaseModel):
-    valueint8: Int8
-    valueint16: Int16
-    valueint32: Int32
-    valueint64: Int64
-    valueint128: Int128
-    valueint256: Int256
+    valueint8: int8
+    valueint16: int16
+    valueint32: int32
+    valueint64: int64
+    valueint128: int128
+    valueint256: int256
 
     @classmethod
     def from_single(cls, value):
@@ -38,12 +38,12 @@ class SignedModel(BaseModel):
 
 
 class UnsignedModel(BaseModel):
-    valueuint8: UInt8
-    valueuint16: UInt16
-    valueuint32: UInt32
-    valueuint64: UInt64
-    valueuint128: UInt128
-    valueuint256: UInt256
+    valueuint8: uint8
+    valueuint16: uint16
+    valueuint32: uint32
+    valueuint64: uint64
+    valueuint128: uint128
+    valueuint256: uint256
 
     @classmethod
     def from_single(cls, value):
