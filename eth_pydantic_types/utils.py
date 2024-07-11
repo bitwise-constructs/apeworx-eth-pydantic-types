@@ -1,9 +1,9 @@
-from typing import Any, Callable, Dict, Optional, Sized, TypeVar, cast
+from typing import Any, Callable, Dict, Optional, Sized, Tuple, TypeVar, cast
 
 from pydantic import WithJsonSchema
 from pydantic_core.core_schema import bytes_schema
 
-from eth_pydantic_types._error import SizeError
+from eth_pydantic_types._error import HexValueError, SizeError
 
 __SIZED_T = TypeVar("__SIZED_T", bound=Sized)
 
@@ -72,3 +72,27 @@ def _coerce_hexbytes_size(val: bytes, num_bytes: int) -> bytes:
     num_zeroes = max(0, num_bytes - len(val_stripped))
     zeroes = b"\x00" * num_zeroes
     return zeroes + val_stripped
+
+
+def validate_hex_str(value: str) -> str:
+    hex_value = (value[2:] if value.startswith("0x") else value).lower()
+    if set(hex_value) - set("1234567890abcdef"):
+        raise HexValueError(value)
+
+    # Missing zero padding.
+    if len(hex_value) % 2 != 0:
+        hex_value = f"0{hex_value}"
+
+    return f"0x{hex_value}"
+
+
+def get_hash_pattern(str_size: int) -> str:
+    return f"^0x[a-fA-F0-9]{{{str_size}}}$"
+
+
+def get_hash_examples(str_size: int) -> Tuple[str, str, str, str]:
+    zero_hash = f"0x{'0' * str_size}"
+    leading_zero = f"0x01{'1e' * ((str_size - 1) // 2)}"
+    trailing_zero = f"0x{'1e' * ((str_size - 1) // 2)}10"
+    full_hash = f"0x{'1e' * (str_size // 2)}"
+    return zero_hash, leading_zero, trailing_zero, full_hash
