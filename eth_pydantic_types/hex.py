@@ -1,4 +1,4 @@
-from typing import Any, ClassVar, Optional, Tuple, TypeAlias, Union, cast
+from typing import Any, ClassVar, Optional, Tuple, Union, cast
 
 from eth_typing import HexStr as EthTypingHexStr
 from eth_utils import add_0x_prefix
@@ -11,6 +11,7 @@ from pydantic_core.core_schema import (
     str_schema,
     with_info_before_validator_function,
 )
+from typing_extensions import TypeAlias
 
 from eth_pydantic_types._error import HexValueError
 from eth_pydantic_types.serializers import hex_serializer
