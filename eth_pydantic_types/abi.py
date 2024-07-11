@@ -2,11 +2,11 @@
 These models are used to match the lowercase type names used by the abi.
 """
 
-from typing import Annotated, ClassVar
+from typing import ClassVar
 
 from hexbytes import HexBytes
 from pydantic import Field
-from typing_extensions import TypeAliasType
+from typing_extensions import Annotated, TypeAliasType
 
 from .address import Address
 from .hex import BoundHexBytes
