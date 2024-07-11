@@ -111,9 +111,6 @@ class HexBytes20(BoundHexBytes):
 
 HexBytes32: TypeAlias = BoundHexBytes
 
-# HexBytes20: TypeAlias = Annotated[BoundHexBytes, Field(max_length=20)]
-# HexBytes32: TypeAlias = Annotated[BoundHexBytes, Field(max_length=32)]
-
 
 class BaseHexStr(str, BaseHex):
     @classmethod
@@ -208,6 +205,3 @@ class HexStr20(BoundHexStr):
 
 
 HexStr32: TypeAlias = BoundHexStr
-
-# HexStr20: TypeAlias = Annotated[HexStr, Field(max_length=20)]
-# HexStr32: TypeAlias = Annotated[HexStr, Field(max_length=32)]

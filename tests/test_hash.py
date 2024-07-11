@@ -76,7 +76,6 @@ def test_schema():
         assert prop["minLength"] == expected_length
         assert prop["type"] == "string"
         assert prop["format"] == "binary"
-        breakpoint()
         assert prop["pattern"] == f"^0x[a-fA-F0-9]{{{hex_value_str_size}}}$"
 
         assert prop["examples"][0] == f"0x{'0' * hex_value_str_size}"
