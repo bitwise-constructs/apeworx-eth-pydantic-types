@@ -81,6 +81,11 @@ class HexBytes(BaseHexBytes, BaseHex):
 
 
 class BoundHexBytes(HexBytes):
+    """
+    Use when receiving ``hexbytes.HexBytes`` values and a specific size is required.
+    Includes a pydantic validator and serializer.
+    """
+
     size: ClassVar[int] = 32
 
     @classmethod
@@ -91,12 +96,6 @@ class BoundHexBytes(HexBytes):
         )
         schema["serialization"] = hex_serializer
         return schema
-
-    @classmethod
-    def __eth_pydantic_validate__(
-        cls, value: Any, info: Optional[ValidationInfo] = None
-    ) -> BaseHexBytes:
-        return cls(cls.validate_size(HexBytes(value)))
 
     @classmethod
     def validate_size(cls, value: bytes) -> bytes:
@@ -172,7 +171,7 @@ class HexStr(BaseHexStr):
 
 
 class BoundHexStr(BaseHexStr):
-    """A hex string value, typically from a hash."""
+    """A hex string value, typically from a hash, that is required to be a specific size."""
 
     size: ClassVar[int] = 32
     calculate_schema: ClassVar[bool] = True
