@@ -1,4 +1,5 @@
-from typing import Any, Callable, Dict, Optional, Sized, Tuple, TypeVar, cast
+from collections.abc import Sized
+from typing import Any, Callable, Optional, TypeVar, cast
 
 from pydantic import WithJsonSchema
 from pydantic_core.core_schema import bytes_schema
@@ -11,7 +12,7 @@ __SIZED_T = TypeVar("__SIZED_T", bound=Sized)
 class WithBytesSchema(WithJsonSchema):
     def __init__(self, **kwargs):
         mode = kwargs.pop("mode", None)
-        schema = cast(Dict[str, Any], bytes_schema(**kwargs))
+        schema = cast(dict[str, Any], bytes_schema(**kwargs))
         super().__init__(schema, mode=mode)
 
 
@@ -90,7 +91,7 @@ def get_hash_pattern(str_size: int) -> str:
     return f"^0x[a-fA-F0-9]{{{str_size}}}$"
 
 
-def get_hash_examples(str_size: int) -> Tuple[str, str, str, str]:
+def get_hash_examples(str_size: int) -> tuple[str, str, str, str]:
     zero_hash = f"0x{'0' * str_size}"
     leading_zero = f"0x01{'1e' * ((str_size - 1) // 2)}"
     trailing_zero = f"0x{'1e' * ((str_size - 1) // 2)}10"
