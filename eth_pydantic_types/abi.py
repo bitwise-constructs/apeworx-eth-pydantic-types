@@ -4,12 +4,11 @@ These models are used to match the lowercase type names used by the abi.
 
 from typing import ClassVar
 
-from hexbytes import HexBytes
 from pydantic import Field
 from typing_extensions import Annotated, TypeAliasType
 
 from .address import Address
-from .hex import BoundHexBytes
+from .hex import BoundHexBytes, HexBytes
 
 bytes = TypeAliasType("bytes", HexBytes)
 string = TypeAliasType("string", str)
