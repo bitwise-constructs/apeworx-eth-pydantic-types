@@ -20,8 +20,8 @@ from eth_pydantic_types.utils import (
 )
 
 if TYPE_CHECKING:
-    from typing_extensions import TypeAlias
     from pydantic_core import CoreSchema
+    from typing_extensions import TypeAlias
 
 
 schema_pattern = "^0x([0-9a-f][0-9a-f])*$"
