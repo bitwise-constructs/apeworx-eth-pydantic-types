@@ -1,9 +1,6 @@
-from typing import Any, ClassVar, Optional, Union, cast
+from typing import TYPE_CHECKING, Any, ClassVar, Optional, Union
 
-from eth_typing import HexStr as EthTypingHexStr
-from eth_utils import add_0x_prefix
 from hexbytes.main import HexBytes as BaseHexBytes
-from pydantic_core import CoreSchema
 from pydantic_core.core_schema import (
     ValidationInfo,
     bytes_schema,
@@ -22,6 +19,10 @@ from eth_pydantic_types.utils import (
     validate_hex_str,
     validate_str_size,
 )
+
+if TYPE_CHECKING:
+    from pydantic_core import CoreSchema
+
 
 schema_pattern = "^0x([0-9a-f][0-9a-f])*$"
 schema_examples = (
@@ -56,11 +57,8 @@ class HexBytes(BaseHexBytes, BaseHex):
     """
 
     @classmethod
-    def __get_pydantic_core_schema__(cls, value, handle=None) -> CoreSchema:
-        schema = with_info_before_validator_function(
-            cls.__eth_pydantic_validate__,
-            bytes_schema(),
-        )
+    def __get_pydantic_core_schema__(cls, value, handle=None) -> "CoreSchema":
+        schema = with_info_before_validator_function(cls.__eth_pydantic_validate__, bytes_schema())
         schema["serialization"] = hex_serializer
         return schema
 
@@ -89,7 +87,7 @@ class BoundHexBytes(HexBytes):
     size: ClassVar[int] = 32
 
     @classmethod
-    def __get_pydantic_core_schema__(cls, value, handle=None) -> CoreSchema:
+    def __get_pydantic_core_schema__(cls, value, handle=None) -> "CoreSchema":
         schema = with_info_before_validator_function(
             cls.__eth_pydantic_validate__,
             bytes_schema(max_length=cls.size, min_length=cls.size),
@@ -152,7 +150,7 @@ class HexStr(BaseHexStr):
     """A hex string value, typically from a hash."""
 
     @classmethod
-    def __get_pydantic_core_schema__(cls, value, handler=None) -> CoreSchema:
+    def __get_pydantic_core_schema__(cls, value, handler=None) -> "CoreSchema":
         return with_info_before_validator_function(
             cls.__eth_pydantic_validate__,
             str_schema(),
@@ -168,7 +166,7 @@ class HexStr(BaseHexStr):
     @classmethod
     def from_bytes(cls, data: bytes) -> "HexStr":
         value_str = super().from_bytes(data)
-        value = add_0x_prefix(cast(EthTypingHexStr, value_str))
+        value = value_str if value_str.startswith("0x") else f"0x{value_str}"
         return HexStr(value)
 
 
