@@ -204,4 +204,4 @@ class HexStr20(BoundHexStr):
     size: ClassVar[int] = 20
 
 
-HexStr32: TypeAlias = BoundHexStr
+HexStr32: "TypeAlias" = BoundHexStr
