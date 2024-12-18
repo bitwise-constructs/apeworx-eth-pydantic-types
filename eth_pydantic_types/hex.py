@@ -177,7 +177,7 @@ class BoundHexStr(BaseHexStr):
     calculate_schema: ClassVar[bool] = True
 
     @classmethod
-    def __get_pydantic_core_schema__(cls, value, handler=None) -> CoreSchema:
+    def __get_pydantic_core_schema__(cls, value, handler=None) -> "CoreSchema":
         str_size = cls.size * 2 + 2
         return with_info_before_validator_function(
             cls.__eth_pydantic_validate__,
