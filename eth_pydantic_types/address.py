@@ -1,16 +1,18 @@
 from functools import cached_property
-from typing import Annotated, Any, ClassVar, Optional
+from typing import TYPE_CHECKING, Annotated, Any, ClassVar, Optional
 
 from cchecksum import to_checksum_address
 from eth_typing import ChecksumAddress
-from pydantic_core import CoreSchema
 from pydantic_core.core_schema import (
     ValidationInfo,
     str_schema,
     with_info_before_validator_function,
 )
 
-from .hex import HexStr20
+from eth_pydantic_types.hex import HexStr20
+
+if TYPE_CHECKING:
+    from pydantic_core import CoreSchema
 
 ADDRESS_PATTERN = "^0x[a-fA-F0-9]{40}$"
 
@@ -35,7 +37,7 @@ class Address(HexStr20):
     calculate_schema: ClassVar[bool] = False  # use schema defined here, not one calculated by size
 
     @classmethod
-    def __get_pydantic_core_schema__(cls, value, handler=None) -> CoreSchema:
+    def __get_pydantic_core_schema__(cls, value, handler=None) -> "CoreSchema":
         return with_info_before_validator_function(
             cls.__eth_pydantic_validate__,
             address_schema(),

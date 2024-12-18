@@ -1,15 +1,4 @@
-from .address import Address, AddressType
-from .bip122 import Bip122Uri
-from .hex import HexBytes, HexBytes20, HexBytes32, HexStr, HexStr20, HexStr32
+def __getattr__(name: str):
+    import eth_pydantic_types._main as module
 
-__all__ = [
-    "Address",
-    "AddressType",
-    "Bip122Uri",
-    "HexBytes",
-    "HexBytes20",
-    "HexBytes32",
-    "HexStr",
-    "HexStr20",
-    "HexStr32",
-]
+    return getattr(module, name)

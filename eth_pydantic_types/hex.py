@@ -8,7 +8,6 @@ from pydantic_core.core_schema import (
     str_schema,
     with_info_before_validator_function,
 )
-from typing_extensions import TypeAlias
 
 from eth_pydantic_types._error import HexValueError
 from eth_pydantic_types.serializers import hex_serializer
@@ -21,6 +20,7 @@ from eth_pydantic_types.utils import (
 )
 
 if TYPE_CHECKING:
+    from typing_extensions import TypeAlias
     from pydantic_core import CoreSchema
 
 
@@ -107,7 +107,7 @@ class HexBytes20(BoundHexBytes):
     size: ClassVar[int] = 20
 
 
-HexBytes32: TypeAlias = BoundHexBytes
+HexBytes32: "TypeAlias" = BoundHexBytes
 
 
 class BaseHexStr(str, BaseHex):
