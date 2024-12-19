@@ -34,7 +34,6 @@ class Address(HexStr20):
         "0xa5a13f62ce1113838e0d9b4559b8caf5f76463c0",  # Trailing zero
         "0x1e59ce931B4CFea3fe4B875411e280e173cB7A9C",
     )
-    calculate_schema: ClassVar[bool] = False  # use schema defined here, not one calculated by size
 
     @classmethod
     def __get_pydantic_core_schema__(cls, value, handler=None) -> "CoreSchema":
@@ -47,6 +46,11 @@ class Address(HexStr20):
     def __eth_pydantic_validate__(cls, value: Any, info: Optional[ValidationInfo] = None) -> str:
         value = super().__eth_pydantic_validate__(value)
         return cls.to_checksum_address(value)
+
+    @classmethod
+    def update_schema(cls):
+        # Already set statically in the class
+        return
 
     @classmethod
     def to_checksum_address(cls, value: str) -> ChecksumAddress:

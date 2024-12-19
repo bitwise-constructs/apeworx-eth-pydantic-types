@@ -174,7 +174,6 @@ class BoundHexStr(BaseHexStr):
     """A hex string value, typically from a hash, that is required to be a specific size."""
 
     size: ClassVar[int] = 32
-    calculate_schema: ClassVar[bool] = True
 
     @classmethod
     def __get_pydantic_core_schema__(cls, value, handler=None) -> "CoreSchema":
@@ -193,11 +192,14 @@ class BoundHexStr(BaseHexStr):
 
     @classmethod
     def validate_size(cls, value: str) -> str:
-        if cls.calculate_schema:
-            str_size = cls.size * 2
-            cls.schema_pattern = get_hash_pattern(str_size)
-            cls.schema_examples = get_hash_examples(str_size)
+        cls.update_schema()
         return validate_str_size(value, cls.size * 2)
+
+    @classmethod
+    def update_schema(cls):
+        str_size = cls.size * 2
+        cls.schema_pattern = get_hash_pattern(str_size)
+        cls.schema_examples = get_hash_examples(str_size)
 
 
 class HexStr20(BoundHexStr):
